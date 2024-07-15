@@ -74,8 +74,10 @@ switch (path.extname(request.url)) {
 //Read file async
 fs.readFile(filepath, (error, content)=>{
     //1. Check for Errors. if error exists, retrun 404.html.
-    if(error){
-        if(error.code==='ENOENT'){
+    if(error)
+    {
+        if(error.code==='ENOENT')
+        {
             const errorFile = path.join(__dirname, "public", '404.html')
             fs.readFile(errorFile , (err, data) =>{
                 //Assumption, all is well
@@ -83,9 +85,11 @@ fs.readFile(filepath, (error, content)=>{
                 response.end(data);
             })
         }
+        else{
         //DEFAULT error hadling
-       // response.writeHead(500)
-       // response.end(`Server error: ${error.code}`)
+            response.writeHead(500)
+            response.end(`Server error: ${error.code}`)
+        }
     }
     else{
         response.writeHead(200, {'Content-Type': contentType})
