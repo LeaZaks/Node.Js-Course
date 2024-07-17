@@ -26,7 +26,7 @@ let customers = [
     { id: 19, name: 'Thomas Hall', address: '777 Birch St, Townville', balance: 1600.60 },
     { id: 20, name: 'Jessica Scott', address: '888 Oak St, Cityville', balance: 700.70 }]
 
-const server = http.createServer((request, response)=>{
+const handleApiRequest = (request, response)=>{
 
     const parsedUrl = url.parse(request.url, true);
     const pathname = parsedUrl.pathname;// -->/api/v1/customers
@@ -149,11 +149,7 @@ const server = http.createServer((request, response)=>{
         }
         break;
     }
-});
+};
 
-const PORT = 3005
 
-//4.Start the server
-server.listen(PORT, ()=> {
-    console.log(`Server is running on port http://localhost:${PORT}`)
-})
+module.exports = {handleApiRequest}
