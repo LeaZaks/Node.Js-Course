@@ -98,6 +98,7 @@ const server = http.createServer((request, response) => {
     });
 });
 
+
 //2. Initialize the WS server
 const wss = new WebSocket.Server({server});
 
