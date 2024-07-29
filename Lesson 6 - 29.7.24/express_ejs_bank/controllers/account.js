@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Transaction = require('../models/transaction');
 const User = require('../models/user');
+//const Account = require('../models/user');
 
 // -- DASHBOARD --
 router.get('/dashboard', (req, res) => {
@@ -10,8 +11,25 @@ router.get('/dashboard', (req, res) => {
 
 // -- TRANSACTIONS --
 router.get('/transactions', async (req, res) => {
+if( res.locals.user.accounts &&  res.locals.user.accounts.length>0){
+    try{
+        const transaction = await Transaction.find({
+        $or:[
+            {fromAccount: {$in: res.locals.user.accounts}},
+            {toAccount: {$in: res.locals.user.accounts}}
+            ]
+        }).exec();
+    res.renderWithLayout('/account/transactions', {transaction});
+    }
+    catch(err){
+        res.renderWithLayout('/account/transactions', {transaction:null, error: err.message});;
 
-    
+    }
+}
+else{
+    res.renderWithLayout('/account/transactions', {transaction:null, error: 'no Accounts found for user'});;
+
+}
 });
 
 
@@ -59,10 +77,12 @@ router.post('/transfer', async (req, res) => {
 
 // -- ACCOUNTS --
 router.get('/accounts', async (req, res) => {
+    console.log("Post accounts");
     res.renderWithLayout('account/accounts', { accounts: res.locals.user.accounts });
 });
 
-router.post('/accounts', async (req, res) => {
+router.post('/', async (req, res) => {
+
     const user = await User.findById(req.user._id);
     user.accounts.push({
         accountNumber: req.body.accountNumber,
@@ -73,7 +93,7 @@ router.post('/accounts', async (req, res) => {
         await user.save();
         res.redirect('account/accounts');
     } catch (err) {
-        res.renderWithLayout('account/accounts', { error: err.message });
+        res.render('account/accounts', { error: err.message });
     }
 });
 
